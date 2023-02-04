@@ -23,7 +23,6 @@ class TeamView(APIView):
             return ResponseMethods.generate_response_error(400, e.message)
 
         team = Team.objects.create(**validated_data)
-
         team_dict = model_to_dict(team)
 
         return ResponseMethods.generate_response_success(201, team_dict)
@@ -33,7 +32,6 @@ class TeamDetailView(APIView):
     def get(self, request: Request, team_id: int) -> Response:
         try:
             team = TeamMethods.find_team(team_id)
-
         except Exception as e:
             return ResponseMethods.generate_response_error(404, e.message)
 
@@ -44,12 +42,13 @@ class TeamDetailView(APIView):
     def patch(self, request: Request, team_id: int) -> Response:
         try:
             team = TeamMethods.find_team(team_id)
-
-        except Exception as e:
-            return ResponseMethods.generate_response_error(404, e.message)
+        except Exception as error:
+            return ResponseMethods.generate_response_error(404, error.message)
 
         for key, value in request.data.items():
-            setattr(team, key, value)
+            if key != id:
+                setattr(team, key, value)
+
         team.save()
         team_dict = model_to_dict(team)
 
@@ -58,8 +57,8 @@ class TeamDetailView(APIView):
     def delete(self, request: Request, team_id: int) -> Response:
         try:
             team = TeamMethods.find_team(team_id)
-        except Exception as e:
-            return ResponseMethods.generate_response_error(404, e.message)
+        except Exception as error:
+            return ResponseMethods.generate_response_error(404, error.message)
 
         team.delete()
         return ResponseMethods.generate_response_success(204)

@@ -1,6 +1,7 @@
 from .exceptions import NegativeTitlesError, ImpossibleTitlesError, InvalidYearCupError, TeamNotFoundError
 from rest_framework.views import Response, status
 from .models import Team
+from datetime import datetime
 
 
 class TeamMethods:
@@ -13,12 +14,10 @@ class TeamMethods:
         return team
 
     def data_processing(team: dict):
-        first_cup_in_dict: str = team["first_cup"][:4]
-        first_cup: int = int(first_cup_in_dict)
-        titles_in_dict: str = team["titles"]
-        titles: int = int(titles_in_dict)
+        first_cup: int = int(team["first_cup"][:4])
+        titles: int = int(team["titles"])
 
-        last_cup: int = 2022
+        year_now = datetime.now().year
 
         cup_is_not_on_period: bool = (first_cup - 1930) % 4 != 0
 
