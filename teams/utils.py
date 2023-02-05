@@ -10,7 +10,6 @@ class TeamMethods:
             team = Team.objects.get(id=team_id)
         except Team.DoesNotExist:
             raise TeamNotFoundError("Team not found")
-
         return team
 
     def data_processing(team: dict):
@@ -18,6 +17,10 @@ class TeamMethods:
         titles: int = int(team["titles"])
 
         year_now = datetime.now().year
+
+        while (year_now - 1930) % 4 != 0:
+            last_cup = year_now - 1
+            year_now -= 1
 
         cup_is_not_on_period: bool = (first_cup - 1930) % 4 != 0
 
@@ -31,7 +34,6 @@ class TeamMethods:
 
         if titles > disputed_cups:
             raise ImpossibleTitlesError("impossible to have more titles than disputed cups")
-
         return team
 
 
@@ -59,5 +61,4 @@ class ResponseMethods:
             case 409:
                 status_code = status.HTTP_409_CONFLICT
                 dict = {"error": message}
-
         return Response(dict, status=status_code)
